@@ -1,19 +1,19 @@
-var app = angular.module('raddit', []);
-
-app.controller('MainController', [
+angular.module('raddit', [])
+.factory('posts', [function(){
+  var o = {
+    posts: [{title: 'hi', link: '', upvotes: 0}]
+  };
+  return o;
+}])
+.controller('MainController', [
   '$scope',
-  function($scope){
+  'posts',
+  function($scope, posts){
     $scope.test = "HI";
-    $scope.posts = [
-      {title: 'post1', upvotes: 5},
-      {title: 'post2', upvotes: 15},
-      {title: 'post3', upvotes: 3},
-      {title: 'post4', upvotes: 9},
-      {title: 'post5', upvotes: 4}
-    ];
+    $scope.posts = posts.posts;
 
-    $scope.addPost = function(){
-      if(!$scope.title || $scope.title === '') {
+    $scope.addPost = function() {
+      if ($scope.title === ''){
         return;
       }
       $scope.posts.push({
@@ -23,10 +23,9 @@ app.controller('MainController', [
       });
       $scope.title = '';
       $scope.link = '';
-    };
+    }
 
     $scope.incrementUpvotes = function(post) {
       post.upvotes += 1;
-    };
-  }
-]);
+    }
+  }]);
