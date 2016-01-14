@@ -1,17 +1,39 @@
-var app = angular.module('raddit', []);
+var app = angular.module('raddit', ['ui.router'])
+.config([
+  '$stateProvider',
+  '$urlRouterProvider',
+  function($stateProvider, $urlRouterProvider){
 
-app.controller('MainController',[
+    $stateProvider
+      .state('home', {
+        url: '/home',
+        templateUrl:'/home.html',
+        controller: 'MainController'
+      })
+
+      .state('posts', {
+        url: '/posts/{id}',
+        templateUrl: '/posts.html',
+        controller: 'PostsController'
+      });
+
+    $urlRouterProvider.otherwise('home');
+}])
+
+.factory('posts', [function(){
+  var o = {
+    posts: []
+  };
+  return o;
+}])
+
+.controller('MainController',[
 '$scope',
-function($scope){
+'posts',
+function($scope, posts){
   $scope.test = "HIYO";
 
-  $scope.posts = [
-    {title: 'post 1', upvotes: 4}, 
-    {title: 'post 2', upvotes: 2},
-    {title: 'post 3', upvotes: 18},
-    {title: 'post 4', upvotes: 9},
-    {title: 'post 5', upvotes: 5}
-  ];
+  $scope.posts = posts.posts;
 
   $scope.addPost = function(){
     if(!$scope.title || $scope.title === ''){
@@ -29,4 +51,23 @@ function($scope){
   $scope.incrementUpvotes = function(post){
     post.upvotes += 1;
   };
+}])
+
+.controller('PostsController', [
+  '$scope',
+  '$stateParams',
+  'posts',
+  function($scope, $stateParams, posts){
+    $scope.posts.push({
+      title: $scope.title,
+      link: $scope.link,
+      upvotes: 0,
+      comments: [
+        {author: 'Jakie', body: 'Me sleep', upvotes:0},
+        {author: 'Meshell', body: 'Au dai farting', upvotes: 5},
+        {author: 'Kebin', body: 'single punch melee person', upvotes: -1}
+      ]
+    })
+
+    $scope.post = posts.posts[$stateParams.id];
 }]);
